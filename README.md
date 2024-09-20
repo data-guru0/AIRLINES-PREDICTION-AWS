@@ -68,7 +68,17 @@ cd your-repository
 Install the required Python packages listed in `requirements.txt`:
 
 ```bash
-pip3 install -r requirements.txt
+# Install virtualenv if you don't have it already
+sudo apt install python3-venv
+
+# Create a virtual environment (name it as `venv`)
+python3 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
+# Now install your requirements
+pip install -r requirements.txt
 ```
 
 ### 6. Run the Streamlit App
