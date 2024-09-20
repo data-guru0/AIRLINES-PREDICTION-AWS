@@ -6,6 +6,7 @@ import numpy as np
 with open('models/lgbm_model.pkl', 'rb') as file:
     loaded_model = pickle.load(file)
 
+
 # Define the ordinal mapping
 ordinal_mapping = {
     0: "Very Poor",
@@ -19,18 +20,24 @@ ordinal_mapping = {
 # Define satisfaction mapping
 satisfaction_mapping = {0: 'neutral or dissatisfied', 1: 'satisfied'}
 
+
 # Function to convert user-friendly input back to numeric for prediction
 def ordinal_to_numeric(input_value):
     reverse_mapping = {v: k for k, v in ordinal_mapping.items()}
     return reverse_mapping[input_value]
 
+
+
 # Function to predict satisfaction
 def predict_satisfaction(online_boarding, delay_ratio, inflight_wifi, passenger_class, travel_type, inflight_entertainment, 
                          flight_distance, seat_comfort, leg_room_service, on_board_service, ease_online_booking, cleanliness):
+    
     X_new = np.array([online_boarding, delay_ratio, inflight_wifi, passenger_class, travel_type, inflight_entertainment, 
                       flight_distance, seat_comfort, leg_room_service, on_board_service, ease_online_booking, cleanliness]).reshape(1, -1)
+    
     y_pred_new = loaded_model.predict(X_new)
     return y_pred_new
+
 
 # Streamlit app title and layout
 st.title("Flight Satisfaction Prediction")
@@ -56,12 +63,18 @@ with col2:
     st.header("Service Ratings")
 
     inflight_wifi = st.selectbox('Inflight Wifi Service', list(ordinal_mapping.values()), help="Rate the inflight WiFi service.")
+
     online_boarding = st.selectbox('Online Boarding', list(ordinal_mapping.values()), help="Rate the online boarding process.")
+
     ease_online_booking = st.selectbox('Ease of Online Booking', list(ordinal_mapping.values()), help="Rate the ease of booking the flight online.")
+
     seat_comfort = st.selectbox('Seat Comfort', list(ordinal_mapping.values()), help="Rate the comfort level of the seat.")
+
     inflight_entertainment = st.selectbox('Inflight Entertainment', list(ordinal_mapping.values()), help="Rate the inflight entertainment options.")
+
     on_board_service = st.selectbox('On-board Service', list(ordinal_mapping.values()), help="Rate the quality of on-board service.")
     leg_room_service = st.selectbox('Leg Room Service', list(ordinal_mapping.values()), help="Rate the legroom space during the flight.")
+    
     cleanliness = st.selectbox('Cleanliness', list(ordinal_mapping.values()), help="Rate the cleanliness of the flight environment.")
     
 # Convert ordinal inputs to numeric values
@@ -88,6 +101,7 @@ with col4:
 # Convert class and travel type to numeric values
 class_mapping = {'Business': 0, 'Eco': 1, 'Eco Plus': 2}
 travel_type_mapping = {'Business travel': 0, 'Personal Travel': 1}
+
 passenger_class_num = class_mapping[passenger_class]
 travel_type_num = travel_type_mapping[travel_type]
 
@@ -98,8 +112,10 @@ if st.button('Predict Satisfaction'):
                                       inflight_entertainment_num, flight_distance, seat_comfort_num, leg_room_service_num, 
                                       on_board_service_num, ease_online_booking_num, cleanliness_num)
     
+    
     # Map the numeric prediction to the satisfaction label
     satisfaction_label = satisfaction_mapping[int(prediction[0])]
+
     
     # Display the prediction with interactivity
     if satisfaction_label == 'satisfied':
